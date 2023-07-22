@@ -54,7 +54,7 @@ blueprint:
           - White
           custom_value: false
           multiple: false
-      default: 'Red'
+      default: 'Blue'
     effect:
       name: Effect
       description: Choose an effect.
@@ -114,12 +114,29 @@ blueprint:
           - 2 Minutes
           - 3 Minutes
           - 4 Minutes
+          - 5 minutes
+          - 6 minutes
+          - 7 minutes
+          - 8 minutes
           - 10 Minutes
+          - 11 minutes
+          - 12 minutes
+          - 13 minutes
+          - 14 minutes
           - 15 Minutes
           - 30 Minutes
           - 45 Minutes
           - 1 Hour
           - 2 Hours
+          - 4 hours
+          - 8 hours
+          - 12 hours
+          - 1 day
+          - 36 hours
+          - 2 days
+          - 3 days
+          - 4 days
+          - 5 days
           - Indefinitely
           custom_value: false
           multiple: false
@@ -130,10 +147,10 @@ blueprint:
       selector:
         number:
           min: 1
-          max: 10
+          max: 100
           mode: slider
           step: 1
-      default: 4
+      default: 1
     debug:
       name: Enable Debug Notification?
       description: Show a persistent notification for each device when triggered.
@@ -203,12 +220,30 @@ variables:
     2 Minutes: 62
     3 Minutes: 63
     4 Minutes: 64
+    5 Minutes: 65
+    6 Minutes: 66
+    7 Minutes: 67
+    8 Minutes: 68
+    9 Minutes: 69
     10 Minutes: 70
+    11 Minutes: 71
+    12 Minutes: 72
+    13 Minutes: 73
+    14 Minutes: 74
     15 Minutes: 75
     30 Minutes: 90
     45 Minutes: 105
     1 Hour: 120
     2 Hours: 122
+    4 hours: 124
+    8 hours: 128
+    12 hours: 132
+    1 day: 144
+    36 hours: 156
+    2 days: 168
+    3 days: 192
+    4 days: 216
+    5 days: 240
     Indefinitely: 255
   effects_dimmer:
     'Off': 0

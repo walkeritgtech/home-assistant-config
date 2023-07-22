@@ -336,6 +336,12 @@ action:
           {% else %}
             {{ clde_inovelli_math }}
           {% endif %}
+        generation: |
+          {% if 'VZW31' in model_name %}
+            3
+          {% else %}
+            2
+          {% endif %}
     - if:
         - condition: template
           value_template: '{{ debug == true }}'
@@ -357,6 +363,7 @@ action:
               effect-int: {{ effect_int }}\n
               parameter: {{ parameter }}\n
               inovelli_math: {{ inovelli_math }}\n
+              generation: {{ generation }}\n
               trigger_id: {{ trigger.id }}\n
               "
     - if:
@@ -370,9 +377,25 @@ action:
             parameter: '{{ parameter }}'
             value: '{{ inovelli_math }}'
       else:
-        - service: zwave_js.bulk_set_partial_config_parameters
-          target:
-            device_id: '{{ repeat.item }}'
-          data:
-            parameter: '{{ parameter }}'
-            value: 0
+        - if:
+          - condition: template
+            value_template: '{{ generation = 3}}'
+          then:
+            -service: zwave_js.bulk_set_partial_config_parameters
+            target:
+              device_id: '{{ repeat.item }}'
+            data:
+              paramter: '{{ parameter }}'
+              value:
+                0xff: 0
+                0xff00: 0
+                0xff0000: 0
+                0xff000000: 0             
+          else:
+            - service: zwave_js.bulk_set_partial_config_parameters
+            target:
+              device_id: '{{ repeat.item }}'
+            data:
+              parameter: '{{ parameter }}'
+              value: 0
+

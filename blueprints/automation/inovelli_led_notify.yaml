@@ -377,13 +377,11 @@ action:
             parameter: '{{ parameter }}'
             value: '{{ inovelli_math }}'
       else:
-        - service: zwave_js.bulk_set_partial_config_parameters
+        - service: zwave_js.set_config_parameter
           target:
             device_id: '{{ repeat.item }}'
           data:
             parameter: '{{ parameter }}'
-            value:
-              0xff: 0
-              0xff00: 0
-              0xff0000: 0
-              0xff000000: 0             
+            bitmask: 0xff000000
+            value: 0
+            

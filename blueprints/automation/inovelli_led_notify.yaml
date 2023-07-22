@@ -39,16 +39,17 @@ blueprint:
       selector:
         select:
           options:
-          - 'Off'
           - Red
           - Orange
-          - Yellow
+          - Lemon
+          - Lime
           - Green
-          - Cyan
           - Teal
+          - Cyan
+          - Aqua
           - Blue
-          - Purple
-          - Light Pink
+          - Violet
+          - Magenta
           - Pink
           - White
           custom_value: false
@@ -62,12 +63,24 @@ blueprint:
           options:
           - 'Off'
           - Solid
-          - Chase
           - Fast Blink
           - Slow Blink
-          - Blink
           - Pulse
-          - Breath
+          - Chase
+          - Open/Close
+          - Small to Big- Fast 
+          - Aurora
+          - Slow Falling
+          - Medium Falling
+          - Fast Falling
+          - Slow Rising
+          - Medium Rising
+          - Fast Rising
+          - Medium Blink
+          - Slow Chase
+          - Fast Chase
+          - Fast Siren
+          - Slow Siren
           custom_value: false
           multiple: false
       default: 'Solid'
@@ -150,18 +163,19 @@ variables:
     dimmer: 16
     combo_light: 24
     combo_fan: 25
-    switch: 8
+    switch: 99
   colors:
-    'Off': 0
-    Red: 1
-    Orange: 21
-    Yellow: 42
+    Red: 0
+    Orange: 14
+    Lemon: 35
+    Lime: 64
     Green: 85
+    Teal: 106
     Cyan: 127
-    Teal: 145
+    Aqua: 149
     Blue: 170
-    Purple: 195
-    Light Pink: 220
+    Violet: 191
+    Magenta: 212
     Pink: 234
     White: 255
   durations:
@@ -210,10 +224,22 @@ variables:
     Solid: 1
     Fast Blink: 2
     Slow Blink: 3
-    Blink: 3
     Pulse: 4
-    Breath: 4
-    Chase: 4
+    Chase: 5
+    Open/Close: 6
+    Small to Big: 7
+    Aurora: 8
+    Slow Falling: 9
+    Medium Falling: 10
+    Fast Falling: 11
+    Slow Rising: 12
+    Medium Rising: 13
+    Fast Rising: 14
+    Medium Blink: 15
+    Slow Chase: 16
+    Fast Chase: 17
+    Fast Siren: 18
+    Slow Siren: 19
 action:  
 - repeat:
     for_each: !input device_list
@@ -314,4 +340,4 @@ action:
             device_id: '{{ repeat.item }}'
           data:
             parameter: '{{ parameter }}'
-            value: 16714410
+            value: 27944191

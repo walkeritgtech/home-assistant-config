@@ -340,4 +340,4 @@ action:
             device_id: '{{ repeat.item }}'
           data:
             parameter: '{{ parameter }}'
-            value: 27944191
+            value: 0

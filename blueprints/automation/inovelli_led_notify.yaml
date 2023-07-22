@@ -1,0 +1,317 @@
+blueprint:
+  domain: automation
+  name: Inovelli Notification LED (ZWave-JS)
+  # Forked from: CRKochan (https://github.com/crkochan/homeassistant-config) who originally
+  # forked from: BrianHanifin (https://github.com/brianhanifin/Home-Assistant-Config)
+  # adding VZW31 parameter settings
+  description: An automation which displays a colored pattern on the LED strip on
+    your in-wall Inovelli Switch, Dimmer, or Fan/Switch combo.
+  input:
+    trigger_entity_id:
+      name: Entity Trigger
+      description: 'An entity used to trigger the LED notification. (example: alert.wet_laundry)'
+      selector:
+        entity:
+          multiple: false
+    on_trigger_state:
+      name: Notification Trigger State
+      description: 'Notification begins when the entity trigger changes to this state. (example: "on")'
+      selector:
+        text:
+          multiline: false
+    off_trigger_state:
+      name: Notification Clear State
+      description: 'Notification is cleared when the entity trigger changes to this state. (example: "idle")'
+      selector:
+        text:
+          multiline: false
+    device_list:
+      name: Inovelli Device(s)
+      description: One or more devices where the notification will be displayed.
+      selector:
+        device:
+          integration: zwave_js
+          manufacturer: Inovelli
+          multiple: true
+    color:
+      name: Color
+      description: Choose a color.
+      selector:
+        select:
+          options:
+          - 'Off'
+          - Red
+          - Orange
+          - Yellow
+          - Green
+          - Cyan
+          - Teal
+          - Blue
+          - Purple
+          - Light Pink
+          - Pink
+          - White
+          custom_value: false
+          multiple: false
+      default: 'Red'
+    effect:
+      name: Effect
+      description: Choose an effect.
+      selector:
+        select:
+          options:
+          - 'Off'
+          - Solid
+          - Chase
+          - Fast Blink
+          - Slow Blink
+          - Blink
+          - Pulse
+          - Breath
+          custom_value: false
+          multiple: false
+      default: 'Solid'
+    duration:
+      name: Duration
+      description: How long should the effect run?
+      selector:
+        select:
+          options:
+          - 'Off'
+          - 1 Second
+          - 2 Seconds
+          - 3 Seconds
+          - 4 Seconds
+          - 5 Seconds
+          - 6 Seconds
+          - 7 Seconds
+          - 8 Seconds
+          - 9 Seconds
+          - 10 Seconds
+          - 15 Seconds
+          - 20 Seconds
+          - 25 Seconds
+          - 30 Seconds
+          - 35 Seconds
+          - 40 Seconds
+          - 45 Seconds
+          - 50 Seconds
+          - 55 Seconds
+          - 60 Seconds
+          - 2 Minutes
+          - 3 Minutes
+          - 4 Minutes
+          - 10 Minutes
+          - 15 Minutes
+          - 30 Minutes
+          - 45 Minutes
+          - 1 Hour
+          - 2 Hours
+          - Indefinitely
+          custom_value: false
+          multiple: false
+      default: '1 Second'
+    brightness:
+      name: Brightness Level
+      description: How bright should the effect be?
+      selector:
+        number:
+          min: 1
+          max: 10
+          mode: slider
+          step: 1
+      default: 4
+    debug:
+      name: Enable Debug Notification?
+      description: Show a persistent notification for each device when triggered.
+      default: false
+      selector:
+        boolean:
+mode: parallel
+trigger:
+- id: on_trigger
+  platform: state
+  entity_id: !input trigger_entity_id
+  from: !input off_trigger_state
+  to: !input on_trigger_state
+- id: off_trigger
+  platform: state
+  entity_id: !input trigger_entity_id
+  from: !input on_trigger_state
+  to: !input off_trigger_state
+variables:
+  level: !input brightness
+  color: !input color
+  debug: !input debug
+  duration: !input duration
+  device_list: !input device_list
+  effect: !input effect
+  parameters:
+    dimmer: 16
+    combo_light: 24
+    combo_fan: 25
+    switch: 8
+  colors:
+    'Off': 0
+    Red: 1
+    Orange: 21
+    Yellow: 42
+    Green: 85
+    Cyan: 127
+    Teal: 145
+    Blue: 170
+    Purple: 195
+    Light Pink: 220
+    Pink: 234
+    White: 255
+  durations:
+    'Off': 0
+    1 Second: 1
+    2 Seconds: 2
+    3 Seconds: 3
+    4 Seconds: 4
+    5 Seconds: 5
+    6 Seconds: 6
+    7 Seconds: 7
+    8 Seconds: 8
+    9 Seconds: 9
+    10 Seconds: 10
+    15 Seconds: 15
+    20 Seconds: 20
+    25 Seconds: 25
+    30 Seconds: 30
+    35 Seconds: 35
+    40 Seconds: 40
+    45 Seconds: 45
+    50 Seconds: 50
+    55 Seconds: 55
+    60 Seconds: 60
+    2 Minutes: 62
+    3 Minutes: 63
+    4 Minutes: 64
+    10 Minutes: 70
+    15 Minutes: 75
+    30 Minutes: 90
+    45 Minutes: 105
+    1 Hour: 120
+    2 Hours: 122
+    Indefinitely: 255
+  effects_dimmer:
+    'Off': 0
+    Solid: 1
+    Chase: 2
+    Fast Blink: 3
+    Slow Blink: 4
+    Blink: 4
+    Pulse: 5
+    Breath: 5
+  effects_switch:
+    'Off': 0
+    Solid: 1
+    Fast Blink: 2
+    Slow Blink: 3
+    Blink: 3
+    Pulse: 4
+    Breath: 4
+    Chase: 4
+action:  
+- repeat:
+    for_each: !input device_list
+    sequence:
+    - variables:
+        model_name: |
+          {% set model_name = device_attr(repeat.item, 'model') %}
+          {% if '-' in model_name %}
+            {{ model_name.split('-')[0] }}
+          {% else %}
+            {{ model_name }}
+          {% endif %}
+        model_type: |
+          {% if model_name is string %}
+            {% if 'LZW31' in model_name %}
+              dimmer
+            {% elif 'LZW36' in model_name %}
+              combo_light
+            {% else %}
+              switch
+            {% endif %}
+          {% elif model is string %}
+            {{ model }}
+          {% else %}
+            dimmer
+          {% endif %}
+        parameter: '{{ parameters[model_type|lower]|int(default=0) }}'
+        color_int: '{{ colors[color|title]|int(default=0) }}'
+        duration_int: '{{ durations[duration|title] }}'
+        effect_int: |
+          {% if model_type == 'switch' %}
+            {{ effects_switch[effect|title]|int(default=0) }}
+          {% else %}
+            {{ effects_dimmer[effect|title]|int(default=0) }}
+          {% endif %}
+        clde_inovelli_math: |
+          {% if trigger.id == 'on_trigger' %}
+            {% if effect_int > 0 %}
+              {{ color_int + (level * 256) + (duration_int * 65536) + (effect_int * 16777216) }}
+            {% else %}
+              0
+            {% endif %}
+          {% elif trigger.id == 'off_trigger' %}
+            0
+          {% endif %}
+        dlce_inovelli_math: |
+          {% if trigger.id == 'on_trigger' %}
+            {% if effect_int > 0 %}
+              {{ duration_int + (level * 256) + (color_int * 65536) + (effect_int * 16777216) }}
+            {% else %}
+              0
+            {% endif %}
+          {% elif trigger.id == 'off_trigger' %}
+            0
+          {% endif %}
+        inovelli_math: |
+          {% if 'VZW31' in model_name %}
+            {{ dlce_inovelli_math }}
+          {% else %}
+            {{ clde_inovelli_math }}
+          {% endif %}
+    - if:
+        - condition: template
+          value_template: '{{ debug == true }}'
+      then:
+        - service: persistent_notification.create
+          data:
+            title: 'DEBUG: inovelli_led_notify'
+            notification_id: inovelli_led_notify {{ repeat.item }}
+            message: "
+              device_id: {{ repeat.item }}\n
+              model_name: {{ model_name }}\n
+              model_type: {{ model_type }}\n
+              color: {{ color|title }}\n
+              color-int: {{ color_int }}\n
+              level: {{ level }}\n
+              duration: {{ duration|title }}\n
+              duration-int: {{ duration_int }}\n
+              effect: {{ effect }}\n
+              effect-int: {{ effect_int }}\n
+              parameter: {{ parameter }}\n
+              inovelli_math: {{ inovelli_math }}\n
+              trigger_id: {{ trigger.id }}\n
+              "
+    - if:
+      - condition: template
+        value_template: '{{ inovelli_math > 0 }}'
+      then:
+        - service: zwave_js.bulk_set_partial_config_parameters
+          target:
+            device_id: '{{ repeat.item }}'
+          data:
+            parameter: '{{ parameter }}'
+            value: '{{ inovelli_math }}'
+      else:
+        - service: zwave_js.bulk_set_partial_config_parameters
+          target:
+            device_id: '{{ repeat.item }}'
+          data:
+            parameter: '{{ parameter }}'
+            value: 16714410

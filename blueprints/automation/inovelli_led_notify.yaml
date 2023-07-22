@@ -398,4 +398,3 @@ action:
             data:
               parameter: '{{ parameter }}'
               value: 0
-

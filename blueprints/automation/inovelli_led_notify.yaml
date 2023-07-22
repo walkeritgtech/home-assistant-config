@@ -68,7 +68,7 @@ blueprint:
           - Pulse
           - Chase
           - Open/Close
-          - Small to Big- Fast 
+          - Small to Big
           - Aurora
           - Slow Falling
           - Medium Falling
@@ -377,24 +377,13 @@ action:
             parameter: '{{ parameter }}'
             value: '{{ inovelli_math }}'
       else:
-        - if:
-          - condition: template
-            value_template: '{{ generation = 3}}'
-          then:
-            - service: zwave_js.bulk_set_partial_config_parameters
-            target:
-              device_id: '{{ repeat.item }}'
-            data:
-              parameter: '{{ parameter }}'
-              value:
-                0xff: 0
-                0xff00: 0
-                0xff0000: 0
-                0xff000000: 0             
-          else:
-            - service: zwave_js.bulk_set_partial_config_parameters
-            target:
-              device_id: '{{ repeat.item }}'
-            data:
-              parameter: '{{ parameter }}'
-              value: 0
+        - service: zwave_js.bulk_set_partial_config_parameters
+          target:
+            device_id: '{{ repeat.item }}'
+          data:
+            parameter: '{{ parameter }}'
+            value:
+              0xff: 0
+              0xff00: 0
+              0xff0000: 0
+              0xff000000: 0             

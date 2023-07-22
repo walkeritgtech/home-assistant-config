@@ -381,11 +381,11 @@ action:
           - condition: template
             value_template: '{{ generation = 3}}'
           then:
-            -service: zwave_js.bulk_set_partial_config_parameters
+            - service: zwave_js.bulk_set_partial_config_parameters
             target:
               device_id: '{{ repeat.item }}'
             data:
-              paramter: '{{ parameter }}'
+              parameter: '{{ parameter }}'
               value:
                 0xff: 0
                 0xff00: 0
